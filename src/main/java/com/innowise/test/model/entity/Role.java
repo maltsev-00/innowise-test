@@ -5,19 +5,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
-import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.UUID;
 
+@Entity
 @Data
+@Table(name = "role")
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "course")
-public class CourseEntity {
+public class Role {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    private Long id;
-    @ManyToMany
-    private Set<UserEntity> users;
+    private UUID id;
+    private String name;
 }

@@ -17,7 +17,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+public class User {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -29,8 +29,5 @@ public class UserEntity {
     private String email;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "users_id", referencedColumnName = "id")
-    private Set<RoleEntity> roles;
-    @ManyToMany
-    private Set<CourseEntity> courses;
-
+    private Set<Role> roles;
 }

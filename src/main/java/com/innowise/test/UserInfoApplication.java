@@ -4,10 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class UserInfoService {
-
+public class UserInfoApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(UserInfoService.class, args);
+		SpringApplication.run(UserInfoApplication.class, args);
 	}
-
 }
