@@ -9,6 +9,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
+
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -17,6 +18,7 @@ configurations {
 repositories {
 	mavenCentral()
 }
+
 ext {
 	mapstructVersion = "1.5.0.Beta2"
 	lombokVersion = "1.18.20"
@@ -29,11 +31,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.liquibase:liquibase-core'
 	implementation("io.springfox:springfox-boot-starter:3.0.0")
-	implementation 'org.hibernate.validator:hibernate-validator:6.1.2.Final'
+	implementation 'org.hibernate.validator:hibernate-validator:6.0.9.Final'
+
+
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"
 	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}", "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 }

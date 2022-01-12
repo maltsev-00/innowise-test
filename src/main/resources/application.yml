@@ -16,3 +16,7 @@ spring:
 
   liquibase:
     change-log: classpath:db/changelog/init.xml
+
+logging:
+  level:
+    com.innowise.test: ${COMMON_LOGGING_LEVEL:DEBUG}
