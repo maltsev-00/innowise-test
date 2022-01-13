@@ -1,6 +1,5 @@
 package com.innowise.test.controller.handler;
 
-import com.innowise.test.exception.LogFileWriteException;
 import com.innowise.test.model.ErrorDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +26,6 @@ public class GlobalExceptionHandler {
         String message = exception.getMessage();
         log.error(message);
         return buildResponse(message, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(LogFileWriteException.class)
-    public Mono<ResponseEntity<ErrorDetails>> handlePaginationException(Throwable exception) {
-        String message = exception.getMessage();
-        log.error(message);
-        return buildResponse(message, HttpStatus.INTERNAL_SERVER_ERROR); // TODO what set in status
     }
 
     @ExceptionHandler(Throwable.class)

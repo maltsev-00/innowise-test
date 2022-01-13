@@ -19,5 +19,7 @@ public interface UserService {
 
     Mono<Void> delete(UUID id);
 
-    Mono<List<UserDto>> findUsersByUsername(UserSearchRequest userSearchRequest);
+    Mono<List<UserDto>> findUsersByUsernameAndSort(UserSearchRequest userSearchRequest);
+
+    Mono<UserDto> findUserById(UUID id);
 }

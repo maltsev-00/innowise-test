@@ -15,4 +15,6 @@ public interface UserConverter {
 
     List<User> convertRequestToEntity(List<UserSaveRequest> userSaveRequests);
 
+    UserDto convertEntityToDto(User user);
+
 }

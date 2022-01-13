@@ -15,11 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 class SpecificationUserServiceImpl implements SpecificationUserService {
 
-    private final List<SearchCriteria> list;
-
-    public void add(SearchCriteria criteria) {
-        list.add(criteria);
-    }
+    private static final String SORT_COLUM = "username";
+    private static final String PATTER_SYMBOL = "%";
 
     public Specification<User> search(SearchCriteria criteria) {
         return (root, query, builder) -> {
@@ -46,13 +43,15 @@ class SpecificationUserServiceImpl implements SpecificationUserService {
             } else if (criteria.getOperation().equals(SearchOperation.MATCH)) {
                 predicates.add(builder.like(
                         builder.lower(root.get(criteria.getKey())),
-                        "%" + criteria.getValue().toString().toLowerCase() + "%"));
+                        PATTER_SYMBOL + criteria.getValue().toString().toLowerCase() + PATTER_SYMBOL));
             } else if (criteria.getOperation().equals(SearchOperation.MATCH_END)) {
                 predicates.add(builder.like(
                         builder.lower(root.get(criteria.getKey())),
-                        criteria.getValue().toString().toLowerCase() + "%"));
+                        criteria.getValue().toString().toLowerCase() + PATTER_SYMBOL));
             }
-            list.clear();
+
+            query.orderBy(builder.asc(root.get(SORT_COLUM)));
+
             return builder.and(predicates.toArray(new Predicate[0]));
         };
     }

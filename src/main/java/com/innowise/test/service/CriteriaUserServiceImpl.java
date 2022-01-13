@@ -23,7 +23,7 @@ public class CriteriaUserServiceImpl implements CriteriaUserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<User> findUserByEmail(Pageable pageRequest, String email) {
+    public Page<User> findUserByEmailAndSortByUsername(Pageable pageRequest, String email) {
         Specification<User> searchSpec = specificationUserService.search(
                 SearchCriteria.builder()
                         .key(EMAIL_COLUMN)

@@ -25,6 +25,9 @@ ext {
 	lombokMapstructBindingVersion = "0.2.0"
 	springFox = "3.0.0"
 	hibernateValidator= "6.0.9.Final"
+	adminServer = "2.6.0"
+	adminCleint = "2.6.0"
+	actuator = "2.6.2"
 }
 
 
@@ -34,6 +37,13 @@ dependencies {
 	implementation 'org.liquibase:liquibase-core'
 	implementation("io.springfox:springfox-boot-starter:${springFox}")
 	implementation ("org.hibernate.validator:hibernate-validator:${hibernateValidator}")
+	implementation ("de.codecentric:spring-boot-admin-starter-server:${adminServer}")
+	implementation ("de.codecentric:spring-boot-admin-starter-client:${adminCleint}")
+
+	implementation "org.springframework.boot:spring-boot-starter-actuator:${actuator}"
+
+
+
 
 
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"

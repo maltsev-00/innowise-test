@@ -71,12 +71,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Mono<List<UserDto>> findUsersByUsername(UserSearchRequest userSearchRequest) {
+    public Mono<List<UserDto>> findUsersByUsernameAndSort(UserSearchRequest userSearchRequest) {
         return Mono.fromCallable(() -> {
                     Pageable pageable = PageRequest.of(userSearchRequest.getPageNo(), userSearchRequest.getPageSize());
-                    return criteriaUserService.findUserByEmail(pageable, userSearchRequest.getEmailSearch());
+                    return criteriaUserService.findUserByEmailAndSortByUsername(pageable, userSearchRequest.getEmailSearch());
                 })
                 .map(pageable -> userConverter.convertEntityToDto(pageable.getContent()))
                 .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @Override
+    public Mono<UserDto> findUserById(UUID id) {
+        return Mono.fromCallable(() -> userRepository.findUserById(id))
+                .map(userConverter::convertEntityToDto);
     }
 }
