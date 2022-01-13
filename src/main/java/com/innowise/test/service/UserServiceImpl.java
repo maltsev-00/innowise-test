@@ -1,11 +1,11 @@
 package com.innowise.test.service;
 
 import com.innowise.test.converter.UserConverter;
-import com.innowise.test.exception.PaginationException;
 import com.innowise.test.model.dto.UserDto;
 import com.innowise.test.model.entity.User;
 import com.innowise.test.model.request.UserRequest;
 import com.innowise.test.model.request.UserSaveRequest;
+import com.innowise.test.model.request.UserSearchRequest;
 import com.innowise.test.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +16,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,28 +24,39 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserConverter userConverter;
+    private final CriteriaUserService criteriaUserService;
 
     @Override
     public Mono<List<UserDto>> findAll(UserRequest userRequest) {
         return Mono.fromCallable(() -> {
-                    try {
-                        Pageable pageable = PageRequest.of(userRequest.getPageNo(), userRequest.getPageSize());
-                        return userRepository.findAll(pageable);
-                    } catch (Exception exception) {
-                        throw new PaginationException(exception.getMessage());
-                    }
+                    Pageable pageable = PageRequest.of(userRequest.getPageNo(), userRequest.getPageSize());
+                    return criteriaUserService.findAll(pageable);
                 })
-                .map(page -> userConverter.convertEntityToDto(page.getContent()))
+                .map(pageable -> userConverter.convertEntityToDto(pageable.getContent()))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
-    public Mono<Void> save(UserSaveRequest userSaveRequest) {
-        return Mono.just(userSaveRequest)
+    public Mono<UUID> save(UserSaveRequest userSaveRequest) {
+        return Mono.fromCallable(() -> userSaveRequest)
                 .map(userRequest -> {
                     User user = userConverter.convertRequestToEntity(userRequest);
-                    return userRepository.save(user);
-                }).then()
+                    userRepository.save(user);
+                    return user.getId();
+                })
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @Override
+    public Mono<List<UUID>> saveList(List<UserSaveRequest> userSaveRequests) {
+        return Mono.fromCallable(() -> userSaveRequests)
+                .map(usersSaveRequest -> {
+                    List<User> users = userConverter.convertRequestToEntity(usersSaveRequest);
+                    userRepository.saveAll(users);
+                    return users.stream()
+                            .map(User::getId)
+                            .collect(Collectors.toList());
+                })
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
@@ -55,6 +67,16 @@ public class UserServiceImpl implements UserService {
                     return Mono.empty();
                 })
                 .then()
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @Override
+    public Mono<List<UserDto>> findUsersByUsername(UserSearchRequest userSearchRequest) {
+        return Mono.fromCallable(() -> {
+                    Pageable pageable = PageRequest.of(userSearchRequest.getPageNo(), userSearchRequest.getPageSize());
+                    return criteriaUserService.findUserByEmail(pageable, userSearchRequest.getEmailSearch());
+                })
+                .map(pageable -> userConverter.convertEntityToDto(pageable.getContent()))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 }

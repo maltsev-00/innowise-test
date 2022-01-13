@@ -3,6 +3,7 @@ package com.innowise.test.service;
 import com.innowise.test.model.dto.UserDto;
 import com.innowise.test.model.request.UserRequest;
 import com.innowise.test.model.request.UserSaveRequest;
+import com.innowise.test.model.request.UserSearchRequest;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -12,7 +13,11 @@ public interface UserService {
 
     Mono<List<UserDto>> findAll(UserRequest userRequest);
 
-    Mono<Void> save(UserSaveRequest userSaveRequest);
+    Mono<UUID> save(UserSaveRequest userSaveRequest);
+
+    Mono<List<UUID>> saveList(List<UserSaveRequest> userSaveRequests);
 
     Mono<Void> delete(UUID id);
+
+    Mono<List<UserDto>> findUsersByUsername(UserSearchRequest userSearchRequest);
 }

@@ -13,4 +13,6 @@ public interface UserConverter {
 
     User convertRequestToEntity(UserSaveRequest userRequest);
 
+    List<User> convertRequestToEntity(List<UserSaveRequest> userSaveRequests);
+
 }
