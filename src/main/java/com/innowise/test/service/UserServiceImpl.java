@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
         return userSearchRequest
                 .flatMap(searchRequest -> {
                     Pageable pageable = PageRequest.of(searchRequest.getPageNo(), searchRequest.getPageSize());
-                    return Mono.fromCallable(() -> criteriaUserService.findUserByEmailAndByUsernameAndByUsername(
+                    return Mono.fromCallable(() -> criteriaUserService.findUserByEmailAndByUsername(
                             pageable,
                             searchRequest.getEmailSearch(),
                             searchRequest.getUsername()));

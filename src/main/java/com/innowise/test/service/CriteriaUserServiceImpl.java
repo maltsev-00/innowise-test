@@ -18,7 +18,7 @@ public class CriteriaUserServiceImpl implements CriteriaUserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<User> findUserByEmailAndByUsernameAndByUsername(Pageable pageRequest, String email, String username) {
+    public Page<User> findUserByEmailAndByUsername(Pageable pageRequest, String email, String username) {
         return userRepository.findAll(
                 Specification
                         .where(UserSpecifications.emailLike(email))
