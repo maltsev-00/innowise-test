@@ -12,5 +12,4 @@ public class UserRequest {
     int pageNo;
     @Min(1)
     int pageSize;
-    String sort;
 }

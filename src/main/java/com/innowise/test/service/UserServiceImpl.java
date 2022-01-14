@@ -3,6 +3,7 @@ package com.innowise.test.service;
 import com.innowise.test.converter.UserConverter;
 import com.innowise.test.model.dto.UserDto;
 import com.innowise.test.model.entity.User;
+import com.innowise.test.model.meta.User_;
 import com.innowise.test.model.request.UserRequest;
 import com.innowise.test.model.request.UserSaveRequest;
 import com.innowise.test.model.request.UserSearchRequest;
@@ -10,13 +11,14 @@ import com.innowise.test.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,36 +29,34 @@ public class UserServiceImpl implements UserService {
     private final CriteriaUserService criteriaUserService;
 
     @Override
-    public Mono<List<UserDto>> findAll(UserRequest userRequest) {
-        return Mono.fromCallable(() -> {
-                    Pageable pageable = PageRequest.of(userRequest.getPageNo(), userRequest.getPageSize());
-                    return criteriaUserService.findAll(pageable);
-                })
-                .map(pageable -> userConverter.convertEntityToDto(pageable.getContent()))
+    public Flux<UserDto> findAll(Mono<UserRequest> userRequest) {
+        return userRequest
+//                .flatMap(request -> {
+//                    PageRequest pageRequest = PageRequest.of(request.getPageNo(), request.getPageSize());
+//                    return Mono.fromCallable(() -> userRepository.findAll(pageRequest));
+//                }) //TODO how more correct
+                .map(request -> PageRequest.of(request.getPageNo(), request.getPageSize(), Sort.by(User_.EMAIL)))
+                .flatMap(pageRequest -> Mono.fromCallable(() -> criteriaUserService.findAll(pageRequest)))
+                .flatMapIterable(Slice::getContent)
+                .map(userConverter::convertEntityToDto)
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
-    public Mono<UUID> save(UserSaveRequest userSaveRequest) {
-        return Mono.fromCallable(() -> userSaveRequest)
-                .map(userRequest -> {
-                    User user = userConverter.convertRequestToEntity(userRequest);
-                    userRepository.save(user);
-                    return user.getId();
-                })
+    public Mono<UUID> save(Mono<UserSaveRequest> userSaveRequest) {
+        return userSaveRequest
+                .map(userConverter::convertRequestToEntity)
+                .flatMap(user -> Mono.fromCallable(() -> userRepository.save(user)))
+                .map(User::getId)
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
-    public Mono<List<UUID>> saveList(List<UserSaveRequest> userSaveRequests) {
-        return Mono.fromCallable(() -> userSaveRequests)
-                .map(usersSaveRequest -> {
-                    List<User> users = userConverter.convertRequestToEntity(usersSaveRequest);
-                    userRepository.saveAll(users);
-                    return users.stream()
-                            .map(User::getId)
-                            .collect(Collectors.toList());
-                })
+    public Flux<UUID> saveList(Flux<UserSaveRequest> userSaveRequests) {
+        return userSaveRequests
+                .map(userConverter::convertRequestToEntity)
+                .flatMap(user -> Mono.fromCallable(() -> userRepository.save(user)))
+                .map(User::getId)
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
@@ -71,18 +71,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Mono<List<UserDto>> findUsersByUsernameAndSort(UserSearchRequest userSearchRequest) {
-        return Mono.fromCallable(() -> {
-                    Pageable pageable = PageRequest.of(userSearchRequest.getPageNo(), userSearchRequest.getPageSize());
-                    return criteriaUserService.findUserByEmailAndSortByUsername(pageable, userSearchRequest.getEmailSearch());
+    public Flux<UserDto> findUserByEmailAndByUsername(Mono<UserSearchRequest> userSearchRequest) {
+        return userSearchRequest
+                .flatMap(searchRequest -> {
+                    Pageable pageable = PageRequest.of(searchRequest.getPageNo(), searchRequest.getPageSize());
+                    return Mono.fromCallable(() -> criteriaUserService.findUserByEmailAndByUsernameAndByUsername(
+                            pageable,
+                            searchRequest.getEmailSearch(),
+                            searchRequest.getUsername()));
                 })
-                .map(pageable -> userConverter.convertEntityToDto(pageable.getContent()))
+                .flatMapIterable(Slice::getContent)
+                .map(userConverter::convertEntityToDto)
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
-    public Mono<UserDto> findUserById(UUID id) {
-        return Mono.fromCallable(() -> userRepository.findUserById(id))
+    public Mono<UserDto> findUserById(UUID idRequest) {
+        return Mono.fromCallable(() -> userRepository.findUserById(idRequest))
                 .map(userConverter::convertEntityToDto);
     }
 }

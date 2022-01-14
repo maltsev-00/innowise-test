@@ -9,10 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -24,38 +24,45 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
-    public Mono<List<UserDto>> getUsers(@Valid @RequestBody UserRequest userRequest) {
-        log.debug("Getting users with request: {}", userRequest);
-        return userService.findAll(userRequest);
+    @PostMapping//TODO how change to GET
+    public Flux<UserDto> getUsers(@Valid @RequestBody Mono<UserRequest> userRequest) {
+        return userService.findAll(userRequest)
+                .doOnComplete(() -> log.debug("getUsers() success"))
+                .doOnError(error -> log.error("getUsers error"));
     }
 
     @PostMapping("/save")
-    public Mono<UUID> saveUser(@Valid @RequestBody UserSaveRequest userSaveRequest) {
-        log.debug("Save user with request: {}", userSaveRequest);
-        return userService.save(userSaveRequest);
+    public Mono<UUID> saveUser(@Valid @RequestBody Mono<UserSaveRequest> userSaveRequest) {
+        return userService.save(userSaveRequest)
+                .doOnSuccess(next -> log.debug("saveUser() success"))
+                .doOnError(error -> log.error("saveUser() error"));
     }
 
-    @PostMapping("/save-list")
-    public Mono<List<UUID>> saveUsers(@Valid @RequestBody List<UserSaveRequest> userSaveRequests) {
-        return userService.saveList(userSaveRequests);
+    @PostMapping("/list")
+    public Flux<UUID> saveUsers(@Valid @RequestBody Flux<UserSaveRequest> userSaveRequests) {
+        return userService.saveList(userSaveRequests)
+                .doOnComplete(() -> log.debug("saveUsers() success"))
+                .doOnError(error -> log.error("saveUsers() error"));
     }
 
     @DeleteMapping("/{id}")
     public Mono<Void> deleteUser(@PathVariable("id") UUID id) {
-        log.debug("Delete user with id: {}", id);
-        return userService.delete(id);
+        return userService.delete(id)
+                .doOnSuccess(success -> log.debug("deleteUser() success"))
+                .doOnError(error -> log.error("deleteUser() error"));
     }
 
     @PostMapping("/search")
-    public Mono<List<UserDto>> findUsersByUsername(@Valid @RequestBody UserSearchRequest userRequest) {
-        log.debug("Find users by username with request: {}", userRequest.toString());
-        return userService.findUsersByUsernameAndSort(userRequest);
+    public Flux<UserDto> findUsersByEmailAndByUsername(@Valid @RequestBody Mono<UserSearchRequest> userRequest) {
+        return userService.findUserByEmailAndByUsername(userRequest)
+                .doOnComplete(() -> log.debug("findUsersByEmailAndByUsername() success"))
+                .doOnError(error -> log.error("findUsersByEmailAndByUsername() error"));
     }
 
-    @GetMapping("/{id}")
-    public Mono<UserDto> getUser(@PathVariable("id") UUID id) {
-        log.debug("Find user by id: {}", id);
-        return userService.findUserById(id);
+    @GetMapping
+    public Mono<UserDto> getUser(@RequestParam(name = "id") UUID id) {
+        return userService.findUserById(id)
+                .doOnSuccess(success -> log.debug("findUserById() success"))
+                .doOnError(error -> log.error("findUserById() error"));
     }
 }

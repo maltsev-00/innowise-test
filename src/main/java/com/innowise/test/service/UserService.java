@@ -4,22 +4,22 @@ import com.innowise.test.model.dto.UserDto;
 import com.innowise.test.model.request.UserRequest;
 import com.innowise.test.model.request.UserSaveRequest;
 import com.innowise.test.model.request.UserSearchRequest;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
 
-    Mono<List<UserDto>> findAll(UserRequest userRequest);
+    Flux<UserDto> findAll(Mono<UserRequest> userRequestMono);
 
-    Mono<UUID> save(UserSaveRequest userSaveRequest);
+    Mono<UUID> save(Mono<UserSaveRequest> userSaveRequest);
 
-    Mono<List<UUID>> saveList(List<UserSaveRequest> userSaveRequests);
+    Flux<UUID> saveList(Flux<UserSaveRequest> userSaveRequests);
 
     Mono<Void> delete(UUID id);
 
-    Mono<List<UserDto>> findUsersByUsernameAndSort(UserSearchRequest userSearchRequest);
+    Flux<UserDto> findUserByEmailAndByUsername(Mono<UserSearchRequest> userSearchRequest);
 
     Mono<UserDto> findUserById(UUID id);
 }

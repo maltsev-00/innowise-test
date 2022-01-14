@@ -28,6 +28,7 @@ ext {
 	adminServer = "2.6.0"
 	adminCleint = "2.6.0"
 	actuator = "2.6.2"
+	jpamodelgen = "5.6.3.Final"
 }
 
 
@@ -39,17 +40,14 @@ dependencies {
 	implementation ("org.hibernate.validator:hibernate-validator:${hibernateValidator}")
 	implementation ("de.codecentric:spring-boot-admin-starter-server:${adminServer}")
 	implementation ("de.codecentric:spring-boot-admin-starter-client:${adminCleint}")
-
 	implementation "org.springframework.boot:spring-boot-starter-actuator:${actuator}"
-
-
-
-
-
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}"
+
 	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}", "org.projectlombok:lombok:${lombokVersion}", "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
+	compileOnly ("org.hibernate:hibernate-jpamodelgen:${jpamodelgen}")
+
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'

@@ -18,7 +18,7 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:8080
+        url: ${ADMIN_CLIENT_URL:http://localhost:8080}
 
 management:
   endpoints:
@@ -26,11 +26,7 @@ management:
       exposure:
         include: "*"
 
-
-
 logging:
-  level:
-    com.innowise.test: ${COMMON_LOGGING_LEVEL:DEBUG}
   file:
     name: logs/client.log
     path: logs

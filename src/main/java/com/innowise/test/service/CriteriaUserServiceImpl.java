@@ -1,8 +1,6 @@
 package com.innowise.test.service;
 
-import com.innowise.test.model.SearchCriteria;
 import com.innowise.test.model.entity.User;
-import com.innowise.test.model.enums.SearchOperation;
 import com.innowise.test.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,20 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class CriteriaUserServiceImpl implements CriteriaUserService {
 
     private final UserRepository userRepository;
-    private final SpecificationUserService specificationUserService;
-
-    private static final String EMAIL_COLUMN = "email";
 
     @Override
     @Transactional(readOnly = true)
-    public Page<User> findUserByEmailAndSortByUsername(Pageable pageRequest, String email) {
-        Specification<User> searchSpec = specificationUserService.search(
-                SearchCriteria.builder()
-                        .key(EMAIL_COLUMN)
-                        .value(email)
-                        .operation(SearchOperation.EQUAL)
-                        .build());
-        return userRepository.findAll(searchSpec, pageRequest);
+    public Page<User> findUserByEmailAndByUsernameAndByUsername(Pageable pageRequest, String email, String username) {
+        return userRepository.findAll(
+                Specification
+                        .where(UserSpecifications.emailLike(email))
+                        .and(UserSpecifications.usernameLike(username)),
+                pageRequest);
     }
 
     @Override

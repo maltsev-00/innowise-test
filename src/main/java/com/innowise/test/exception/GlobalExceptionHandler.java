@@ -1,4 +1,4 @@
-package com.innowise.test.controller.handler;
+package com.innowise.test.exception;
 
 import com.innowise.test.model.ErrorDetails;
 import lombok.RequiredArgsConstructor;
