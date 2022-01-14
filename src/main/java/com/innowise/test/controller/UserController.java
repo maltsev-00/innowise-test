@@ -32,36 +32,36 @@ public class UserController {
     }
 
     @PostMapping("/save")
-    public Mono<UUID> saveUser(@Valid @RequestBody Mono<UserSaveRequest> userSaveRequest) {
+    public Mono<UUID> save(@Valid @RequestBody Mono<UserSaveRequest> userSaveRequest) {
         return userService.save(userSaveRequest)
                 .doOnSuccess(next -> log.debug("saveUser() success"))
                 .doOnError(error -> log.error("saveUser() error"));
     }
 
     @PostMapping("/list")
-    public Flux<UUID> saveUsers(@Valid @RequestBody Flux<UserSaveRequest> userSaveRequests) {
+    public Flux<UUID> saveList(@Valid @RequestBody Flux<UserSaveRequest> userSaveRequests) {
         return userService.saveList(userSaveRequests)
                 .doOnComplete(() -> log.debug("saveUsers() success"))
                 .doOnError(error -> log.error("saveUsers() error"));
     }
 
     @DeleteMapping("/{id}")
-    public Mono<Void> deleteUser(@PathVariable("id") UUID id) {
-        return userService.delete(id)
+    public Mono<Void> deleteById(@PathVariable("id") UUID id) {
+        return userService.deleteById(id)
                 .doOnSuccess(success -> log.debug("deleteUser() success"))
                 .doOnError(error -> log.error("deleteUser() error"));
     }
 
     @PostMapping("/search")
-    public Flux<UserDto> findUsersByEmailAndByUsername(@Valid @RequestBody Mono<UserSearchRequest> userRequest) {
-        return userService.findUserByEmailAndByUsername(userRequest)
+    public Flux<UserDto> findByEmailAndByUsername(@Valid @RequestBody Mono<UserSearchRequest> userRequest) {
+        return userService.findByEmailAndByUsername(userRequest)
                 .doOnComplete(() -> log.debug("findUsersByEmailAndByUsername() success"))
                 .doOnError(error -> log.error("findUsersByEmailAndByUsername() error"));
     }
 
     @GetMapping
     public Mono<UserDto> getUser(@RequestParam(name = "id") UUID id) {
-        return userService.findUserById(id)
+        return userService.findById(id)
                 .doOnSuccess(success -> log.debug("findUserById() success"))
                 .doOnError(error -> log.error("findUserById() error"));
     }

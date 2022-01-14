@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Mono<Void> delete(UUID id) {
+    public Mono<Void> deleteById(UUID id) {
         return Mono.fromCallable(() -> {
                     userRepository.deleteById(id);
                     return Mono.empty();
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Flux<UserDto> findUserByEmailAndByUsername(Mono<UserSearchRequest> userSearchRequest) {
+    public Flux<UserDto> findByEmailAndByUsername(Mono<UserSearchRequest> userSearchRequest) {
         return userSearchRequest
                 .flatMap(searchRequest -> {
                     Pageable pageable = PageRequest.of(searchRequest.getPageNo(), searchRequest.getPageSize());
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Mono<UserDto> findUserById(UUID idRequest) {
+    public Mono<UserDto> findById(UUID idRequest) {
         return Mono.fromCallable(() -> userRepository.findUserById(idRequest))
                 .map(userConverter::convertEntityToDto);
     }

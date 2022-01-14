@@ -17,9 +17,9 @@ public interface UserService {
 
     Flux<UUID> saveList(Flux<UserSaveRequest> userSaveRequests);
 
-    Mono<Void> delete(UUID id);
+    Mono<Void> deleteById(UUID id);
 
-    Flux<UserDto> findUserByEmailAndByUsername(Mono<UserSearchRequest> userSearchRequest);
+    Flux<UserDto> findByEmailAndByUsername(Mono<UserSearchRequest> userSearchRequest);
 
-    Mono<UserDto> findUserById(UUID id);
+    Mono<UserDto> findById(UUID id);
 }
