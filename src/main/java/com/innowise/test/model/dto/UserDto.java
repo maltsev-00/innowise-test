@@ -2,7 +2,6 @@ package com.innowise.test.model.dto;
 
 import lombok.Builder;
 import lombok.Value;
-import reactor.core.publisher.Flux;
 
 import java.util.Set;
 import java.util.UUID;
