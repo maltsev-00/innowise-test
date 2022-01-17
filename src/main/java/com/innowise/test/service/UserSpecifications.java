@@ -8,16 +8,14 @@ import java.util.UUID;
 
 public class UserSpecifications {
 
-    private static final String SPECIFICATION_PATTERN = "%";
-
     public static Specification<User> emailLike(String email) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(User_.EMAIL),
-                SPECIFICATION_PATTERN + email + SPECIFICATION_PATTERN);
+                 email);
     }
 
     public static Specification<User> usernameLike(String username) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(User_.USERNAME),
-                SPECIFICATION_PATTERN + username + SPECIFICATION_PATTERN);
+                  username);
     }
 
     public static Specification<User> idEqual(UUID id) {

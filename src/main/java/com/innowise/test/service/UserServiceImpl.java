@@ -3,13 +3,12 @@ package com.innowise.test.service;
 import com.innowise.test.converter.UserConverter;
 import com.innowise.test.model.dto.UserDto;
 import com.innowise.test.model.entity.User;
-import com.innowise.test.model.meta.User_;
+import com.innowise.test.model.request.UserRequest;
 import com.innowise.test.model.request.UserSaveRequest;
 import com.innowise.test.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -26,19 +25,14 @@ public class UserServiceImpl implements UserService {
     private final CriteriaUserService criteriaUserService;
 
     @Override
-    public Flux<UserDto> getUsers(int pageNo, int pageSize) {
-        return Mono.fromCallable(() -> {
-                    PageRequest page = PageRequest.of(pageNo, pageSize, Sort.by(User_.EMAIL));
-                    return criteriaUserService.findAll(page);
-                })
-                .flatMapIterable(Slice::getContent)
+    public Flux<UserDto> getUsers(Mono<UserRequest> userRequest) {
+        return userRequest
+                .flatMap(request -> {
+                    PageRequest page = PageRequest.of(request.getPageNo(), request.getPageSize());
+                    return Mono.fromCallable(() -> criteriaUserService.findAll(page, request.getIdUser(), request.getUsername(), request.getEmail()));
+                }).flatMapIterable(Slice::getContent)
                 .map(userConverter::convertEntityToDto)
                 .subscribeOn(Schedulers.boundedElastic());
-//                .flatMap(request -> {
-//                    PageRequest pageRequest = PageRequest.of(request.getPageNo(), request.getPageSize());
-//                    return Mono.fromCallable(() -> userRepository.findAll(pageRequest));
-//                }) //TODO how more correct
-
     }
 
     @Override
@@ -66,21 +60,6 @@ public class UserServiceImpl implements UserService {
                     return Mono.empty();
                 })
                 .then()
-                .subscribeOn(Schedulers.boundedElastic());
-    }
-
-    @Override
-    public Flux<UserDto> getUsers(String email, String username) {
-        return Mono.fromCallable(() -> criteriaUserService.findUserByEmailAndByUsername(email, username))
-                .flatMapIterable(list -> list)
-                .map(userConverter::convertEntityToDto)
-                .subscribeOn(Schedulers.boundedElastic());
-    }
-
-    @Override
-    public Mono<UserDto> findUserById(UUID id) {
-        return Mono.fromCallable(() -> criteriaUserService.findUserById(id))
-                .map(userConverter::convertEntityToDto)
                 .subscribeOn(Schedulers.boundedElastic());
     }
 }
