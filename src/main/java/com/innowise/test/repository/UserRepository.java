@@ -9,7 +9,4 @@ import java.util.UUID;
 
 @Repository
 public interface UserRepository extends PagingAndSortingRepository<User, UUID>, JpaSpecificationExecutor<User> {
-
-    User findUserById(UUID id);
-
 }
