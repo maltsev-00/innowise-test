@@ -27,5 +27,4 @@ public class CriteriaUserServiceImpl implements CriteriaUserService {
                         .or(UserSpecifications.usernameLike(username))
                         .or(UserSpecifications.emailLike(email))), pageable);
     }
-
 }

@@ -1,21 +1,19 @@
 package com.innowise.test.model.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
+import lombok.Value;
 
 import javax.validation.constraints.Min;
 import java.util.UUID;
 
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Value
+@Builder
 public class UserRequest {
-    private int pageNo;
+    int pageNo;
     @Min(1)
-    private int pageSize;
-    private UUID idUser;
-    private String email;
-    private String username;
+    int pageSize;
+    UUID idUser;
+    String email;
+    String username;
 }
