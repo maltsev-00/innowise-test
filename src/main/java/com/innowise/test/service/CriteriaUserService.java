@@ -10,4 +10,5 @@ public interface CriteriaUserService {
 
     Page<User> findAll(Pageable pageable, UUID idUser, String username, String email);
 
+    User findById(UUID idUser);
 }

@@ -1,6 +1,7 @@
 package com.innowise.test.controller;
 
 import com.innowise.test.model.dto.UserDto;
+import com.innowise.test.model.request.UserPhotoRequest;
 import com.innowise.test.model.request.UserRequest;
 import com.innowise.test.model.request.UserSaveRequest;
 import com.innowise.test.service.UserService;
@@ -49,6 +50,11 @@ public class UserController {
         return userService.saveUsers(userSaveRequests)
                 .doOnComplete(() -> log.debug("saveUsers() success"))
                 .doOnError(error -> log.error("saveUsers() error"));
+    }
+
+    @PutMapping
+    public Mono<UUID> saveUserPhoto(@Valid UserPhotoRequest userPhotoRequest){
+       return userService.saveUserPhoto(userPhotoRequest);
     }
 
 }

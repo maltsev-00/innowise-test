@@ -30,7 +30,7 @@ public class UserSpecifications {
     public static Specification<User> idEqual(UUID id) {
         return (root, query, criteriaBuilder) ->
                 ofNullable(id)
-                        .map(value -> criteriaBuilder.equal(root.get(User_.EMAIL), id))
+                        .map(value -> criteriaBuilder.equal(root.get(User_.ID), id))
                         .orElseGet(criteriaBuilder::conjunction);
     }
 }

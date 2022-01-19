@@ -2,7 +2,9 @@ package com.innowise.test.service;
 
 import com.innowise.test.converter.UserConverter;
 import com.innowise.test.model.dto.UserDto;
+import com.innowise.test.model.entity.PhotoUser;
 import com.innowise.test.model.entity.User;
+import com.innowise.test.model.request.UserPhotoRequest;
 import com.innowise.test.model.request.UserRequest;
 import com.innowise.test.model.request.UserSaveRequest;
 import com.innowise.test.repository.UserRepository;
@@ -30,7 +32,8 @@ public class UserServiceImpl implements UserService {
                 .flatMap(request -> {
                     PageRequest page = PageRequest.of(request.getPageNo(), request.getPageSize());
                     return Mono.fromCallable(() -> criteriaUserService.findAll(page, request.getIdUser(), request.getUsername(), request.getEmail()));
-                }).flatMapIterable(Slice::getContent)
+                })
+                .flatMapIterable(Slice::getContent)
                 .map(userConverter::convertEntityToDto)
                 .subscribeOn(Schedulers.boundedElastic());
     }
@@ -61,5 +64,19 @@ public class UserServiceImpl implements UserService {
                 })
                 .then()
                 .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @Override
+    public Mono<UUID> saveUserPhoto(UserPhotoRequest userPhotoRequest) {
+        return Mono.fromCallable(() -> criteriaUserService.findById(userPhotoRequest.getIdUser()))
+                .flatMap(user -> {
+                    var photosUser = user.getPhotoUsers();
+                    photosUser.add(PhotoUser.builder()
+                            .photoId(userPhotoRequest.getIdPhoto())
+                            .build());
+                    user.setPhotoUsers(photosUser);
+                    return Mono.fromCallable(() -> userRepository.save(user));
+                })
+                .map(User::getId);
     }
 }

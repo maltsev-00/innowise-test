@@ -28,6 +28,13 @@ public class GlobalExceptionHandler {
         return buildResponse(message, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public Mono<ResponseEntity<ErrorDetails>> handleNotFoundResourceStatusException(UserNotFoundException exception) {
+        String message = exception.getMessage();
+        log.error(message);
+        return buildResponse(message, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(Throwable.class)
     public Mono<ResponseEntity<ErrorDetails>> handleInternalException(Throwable exception) {
         String message = exception.getMessage();

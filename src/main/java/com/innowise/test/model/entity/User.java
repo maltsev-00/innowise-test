@@ -33,6 +33,10 @@ public class User {
     @JoinColumn(name = "users_id", referencedColumnName = "id")
     private Set<Role> roles;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "users_id", referencedColumnName = "id")
+    private Set<PhotoUser> photoUsers;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "card_id", referencedColumnName = "id")
     private Card card;
