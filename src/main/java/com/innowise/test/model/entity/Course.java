@@ -20,7 +20,6 @@ public class Course {
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
-    @Length(max = 100)
     private String name;
 
     @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY)

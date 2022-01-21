@@ -21,7 +21,6 @@ public class Card {
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
-    @Min(4)
     private int number;
     @OneToOne(mappedBy = "card")
     private User user;

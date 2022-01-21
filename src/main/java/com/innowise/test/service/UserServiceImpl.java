@@ -1,6 +1,7 @@
 package com.innowise.test.service;
 
 import com.innowise.test.converter.UserConverter;
+import com.innowise.test.exception.UserNotFoundException;
 import com.innowise.test.model.dto.UserDto;
 import com.innowise.test.model.entity.PhotoUser;
 import com.innowise.test.model.entity.User;
@@ -25,6 +26,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserConverter userConverter;
     private final CriteriaUserService criteriaUserService;
+
+    private static final String NOT_FOUND_FILE_EXCEPTION_MESSAGE = "User not found with id: %s";
 
     @Override
     public Flux<UserDto> getUsers(Mono<UserRequest> userRequest) {
@@ -57,11 +60,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Mono<Void> deleteUser(UUID id) {
+    public Mono<Void> deleteUser(UUID idUser) {
         return Mono.fromCallable(() -> {
-                    userRepository.deleteById(id);
+                    userRepository.deleteById(idUser);
                     return Mono.empty();
                 })
+                .onErrorResume(error -> Mono.error(new UserNotFoundException(String.format(NOT_FOUND_FILE_EXCEPTION_MESSAGE, idUser))))
                 .then()
                 .subscribeOn(Schedulers.boundedElastic());
     }
@@ -69,6 +73,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Mono<UUID> saveUserPhoto(UserPhotoRequest userPhotoRequest) {
         return Mono.fromCallable(() -> criteriaUserService.findById(userPhotoRequest.getIdUser()))
+                .onErrorResume(error -> Mono.error(new UserNotFoundException(String.format(NOT_FOUND_FILE_EXCEPTION_MESSAGE, userPhotoRequest.getIdUser()))))
                 .flatMap(user -> {
                     var photosUser = user.getPhotoUsers();
                     photosUser.add(PhotoUser.builder()
