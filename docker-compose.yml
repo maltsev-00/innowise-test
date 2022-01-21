@@ -39,5 +39,5 @@ services:
     volumes:
         - /home/barry/mongodb/database:/data/db
     ports:
-        - 27011:27011
+        - 27011:27017
     restart: unless-stopped
