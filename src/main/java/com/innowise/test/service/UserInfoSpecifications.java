@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import static java.util.Optional.ofNullable;
 
-public class UserSpecifications {
+public class UserInfoSpecifications {
 
     public static Specification<User> emailLike(String email) {
         return (root, query, criteriaBuilder) ->

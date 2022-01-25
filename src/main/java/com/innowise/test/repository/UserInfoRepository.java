@@ -8,5 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends PagingAndSortingRepository<User, UUID>, JpaSpecificationExecutor<User> {
+public interface UserInfoRepository extends PagingAndSortingRepository<User, UUID>, JpaSpecificationExecutor<User> {
+    User deleteUserById(UUID id);
+
+    User findUserById(UUID id);
 }

@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
-public interface CriteriaUserService {
+public interface CriteriaUserInfoService {
 
     Page<User> findAll(Pageable pageable, UUID idUser, String username, String email);
 

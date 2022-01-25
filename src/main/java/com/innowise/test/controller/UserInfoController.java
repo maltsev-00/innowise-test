@@ -4,7 +4,7 @@ import com.innowise.test.model.dto.UserDto;
 import com.innowise.test.model.request.UserPhotoRequest;
 import com.innowise.test.model.request.UserRequest;
 import com.innowise.test.model.request.UserSaveRequest;
-import com.innowise.test.service.UserService;
+import com.innowise.test.service.UserInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -20,41 +20,41 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class UserController {
+public class UserInfoController {
 
-    private final UserService userService;
+    private final UserInfoService userInfoService;
 
     @GetMapping
     public Flux<UserDto> getUsers(@Valid Mono<UserRequest> userRequest) {
-        return userService.getUsers(userRequest)
+        return userInfoService.getUsers(userRequest)
                 .doOnComplete(() -> log.debug("getUsers() success"))
                 .doOnError(error -> log.error("getUsers error"));
     }
 
     @PostMapping
     public Mono<UUID> saveUser(@Valid @RequestBody Mono<UserSaveRequest> userSaveRequest) {
-        return userService.saveUser(userSaveRequest)
+        return userInfoService.saveUser(userSaveRequest)
                 .doOnSuccess(success -> log.debug("saveUser() success"))
                 .doOnError(error -> log.error("saveUser() error"));
     }
 
     @DeleteMapping("/{idUser}")
     public Mono<Void> deleteUser(@PathVariable("idUser") UUID id) {
-        return userService.deleteUser(id)
+        return userInfoService.deleteUser(id)
                 .doOnSuccess(success -> log.debug("deleteUser() success"))
                 .doOnError(error -> log.error("deleteUser() error"));
     }
 
     @PostMapping("/list")
     public Flux<UUID> saveUsers(@Valid @RequestBody Flux<UserSaveRequest> userSaveRequests) {
-        return userService.saveUsers(userSaveRequests)
+        return userInfoService.saveUsers(userSaveRequests)
                 .doOnComplete(() -> log.debug("saveUsers() success"))
                 .doOnError(error -> log.error("saveUsers() error"));
     }
 
     @PutMapping
     public Mono<UUID> saveUserPhoto(@Valid UserPhotoRequest userPhotoRequest){
-       return userService.saveUserPhoto(userPhotoRequest);
+       return userInfoService.saveUserPhoto(userPhotoRequest);
     }
 
 }

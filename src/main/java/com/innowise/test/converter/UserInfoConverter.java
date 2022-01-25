@@ -6,7 +6,7 @@ import com.innowise.test.model.request.UserSaveRequest;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface UserConverter {
+public interface UserInfoConverter {
 
     User convertRequestToEntity(UserSaveRequest userRequest);
 

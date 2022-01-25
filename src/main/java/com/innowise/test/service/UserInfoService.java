@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
-public interface UserService {
+public interface UserInfoService {
 
     Flux<UserDto> getUsers(Mono<UserRequest> userRequest);
 
